@@ -26,7 +26,9 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
     keywordFormat.setFontWeight(QFont::Bold);
     const QString keywordPatterns[] = {
         QStringLiteral("\\babs\\b"),
+        QStringLiteral("\\baction_tile\\b"),
         QStringLiteral("\\band\\b"),
+        QStringLiteral("\\balert\\b"),
         QStringLiteral("\\bappend\\b"),
         QStringLiteral("\\bapply\\b"),
         QStringLiteral("\\bascii\\b"),
@@ -101,8 +103,8 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\blogand\\b"),
         QStringLiteral("\\bmacro\\b([?])"),
         QStringLiteral("\\bmap\\b"),
-        QStringLiteral("\\bmap\\b"),
         QStringLiteral("\\bmap\\b([?])"),
+        QStringLiteral("\\bmapcar\\b"),
         QStringLiteral("\\bmax\\b"),
         QStringLiteral("\\bmember\\b([?])"),
         QStringLiteral("\\bmeta\\b"),
@@ -110,6 +112,7 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\bminus\\b([?])"),
         QStringLiteral("\\bminusp\\b"),
         QStringLiteral("\\bnew_dialog\\b"),
+        QStringLiteral("\\bnil\\b"),
         QStringLiteral("\\bnil\\b([?])"),
         QStringLiteral("\\bnot\\b"),
         QStringLiteral("\\bnth\\b"),
@@ -124,6 +127,7 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\bprint\\b"),
         QStringLiteral("\\bprintln\\b"),
         QStringLiteral("\\bprn\\b"),
+        QStringLiteral("\\bprogn\\b"),
         QStringLiteral("\\bprompt\\b"),
         QStringLiteral("\\bpr-str\\b"),
         QStringLiteral("\\bquasiquote\\b"),
@@ -145,6 +149,7 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\bsin\\b"),
         QStringLiteral("\\bslurp\\b"),
         QStringLiteral("\\bsqrt\\b"),
+        QStringLiteral("\\bstart_dialog\\b"),
         QStringLiteral("\\bstartapp\\b"),
         QStringLiteral("\\bstr\\b"),
         QStringLiteral("\\bstrcase\\b"),
@@ -157,6 +162,7 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\bsymbol\\b"),
         QStringLiteral("\\bsymbol\\b"),
         QStringLiteral("\\bsymbol\\b([?])"),
+        QStringLiteral("\\bT\\b"),
         QStringLiteral("\\btan\\b"),
         QStringLiteral("\\bterpri\\b"),
         QStringLiteral("\\bthrow\\b"),
@@ -166,6 +172,7 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
         QStringLiteral("\\btry*\\b"),
         QStringLiteral("\\btype\\b"),
         QStringLiteral("\\btype\\b([?])"),
+        QStringLiteral("\\bunload_dialog\\b"),
         QStringLiteral("\\buntrace\\b"),
         QStringLiteral("\\bvals\\b"),
         QStringLiteral("\\bvec\\b"),
@@ -201,9 +208,10 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
     }
 
 //! [3]
-    singleLineCommentFormat.setForeground(QColor(137,136,135));
-    rule.pattern = QRegularExpression(QStringLiteral(";[^\n]*"));
-    rule.format = singleLineCommentFormat;
+    bracketFormat.setForeground(QColor(0, 0, 255));
+    bracketFormat.setFontWeight(QFont::Bold);
+    rule.pattern = QRegularExpression(QStringLiteral("[()]"));
+    rule.format = bracketFormat;
     highlightingRules.append(rule);
 
 //! [4]
@@ -213,11 +221,11 @@ LispHighlighter::LispHighlighter(QTextDocument *parent)
     highlightingRules.append(rule);
 
 //! [5]
-    bracketFormat.setForeground(QColor(0, 87, 174));
-    bracketFormat.setFontWeight(QFont::Bold);
-    rule.pattern = QRegularExpression(QStringLiteral("[()]|[)]"));
-    rule.format = bracketFormat;
+    singleLineCommentFormat.setForeground(QColor(137,136,135));
+    rule.pattern = QRegularExpression(QStringLiteral(";(?=[^\"]*(?:(?:\"[^\"]*){2})*$).*"));
+    rule.format = singleLineCommentFormat;
     highlightingRules.append(rule);
+
 }
 
 void LispHighlighter::highlightBlock(const QString &text)
@@ -232,4 +240,3 @@ void LispHighlighter::highlightBlock(const QString &text)
 
     setCurrentBlockState(0);
 }
-
